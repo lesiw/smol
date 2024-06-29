@@ -1,0 +1,7 @@
+FROM golang:latest AS builder
+WORKDIR /work
+COPY . .
+RUN go generate && CGO_ENABLED=0 go build -o short cmd/short.go
+
+FROM postgres:latest
+COPY --from=builder /work/short /usr/bin/short
