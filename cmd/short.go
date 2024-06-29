@@ -11,11 +11,11 @@ import (
 	"github.com/jackc/pgx/v5"
 	"lesiw.io/defers"
 	"lesiw.io/flag"
-	"lesiw.io/short/stmt"
+	"lesiw.io/smol/stmt"
 )
 
 var (
-	flags = flag.NewSet(os.Stderr, "short [-a ALIAS] URL")
+	flags = flag.NewSet(os.Stderr, "smol [-a ALIAS] URL")
 	alias = flags.String("a", "alias")
 
 	errParse = errors.New("parse error")

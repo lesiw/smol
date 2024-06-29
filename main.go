@@ -16,7 +16,7 @@ import (
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/jackc/pgx/v5"
 	"lesiw.io/defers"
-	"lesiw.io/short/stmt"
+	"lesiw.io/smol/stmt"
 )
 
 //go:embed sql/migrations/*

@@ -1,4 +1,4 @@
-module lesiw.io/short
+module lesiw.io/smol
 
 go 1.22.4
 
