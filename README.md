@@ -1,4 +1,4 @@
-# short: a shortened URL host for k8s
+# smol: a URL shortner
 
 ## Local development
 
