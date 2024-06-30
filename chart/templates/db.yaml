@@ -7,7 +7,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: standard
+  storageClassName: {{ .Values.storageClass | default "standard" }}
   resources:
     requests:
       storage: {{ .Values.dbsize | default "1Gi" }}

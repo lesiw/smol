@@ -23,6 +23,7 @@ minikube image build -t lesiw/smol:db -f Dockerfile.pg .
 go run internal/secrets/generate.go -n "${DOMAIN:-smol.lan}"
 helm install smol ./chart \
     --set domain="${DOMAIN:-smol.lan}" \
+    --set storageClass=standard \
     --set dbsize=1Gi \
     --set memory=32Mi \
     --set dbmemory=64Mi \
