@@ -1,0 +1,54 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  namespace: {{ .Values.domain | default "smol.lan" | replace "." "-" }}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: app
+          image: {{ .Values.image | default "lesiw/smol" }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PG_HOST
+              value: db
+            - name: PG_USER
+              value: postgres
+            - name: PG_DATABASE
+              value: postgres
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: secret
+            - name: DOMAIN
+              value: {{ .Values.domain | default "smol.lan" }}
+          resources:
+            requests:
+              memory: {{ .Values.memory | default "32Mi" }}
+            limits:
+              memory: {{ .Values.memory | default "32Mi" }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app
+  namespace: {{ .Values.domain | default "smol.lan" | replace "." "-" }}
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: app

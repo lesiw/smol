@@ -1,0 +1,28 @@
+{{- if .Values.ingress.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app
+  namespace: {{ .Values.domain | default "smol.lan" | replace "." "-" }}
+  {{- if .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  tls:
+  - hosts:
+    - {{ .Values.domain | default "smol.lan" }}
+    secretName: ingress-tls
+  rules:
+  - host: {{ .Values.domain | default "smol.lan" }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app
+            port:
+              number: 80
+{{- end -}}

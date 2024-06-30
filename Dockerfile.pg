@@ -3,5 +3,5 @@ WORKDIR /work
 COPY . .
 RUN go generate && CGO_ENABLED=0 go build -o smol cmd/smol.go
 
-FROM postgres:latest
+FROM postgres:16
 COPY --from=builder /work/smol /usr/bin/smol

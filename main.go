@@ -1,10 +1,11 @@
-//go:generate go run internal/sql.go
+//go:generate go run internal/sql/generate.go
 
 package main
 
 import (
 	"context"
 	"embed"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -36,8 +37,14 @@ func run() error {
 	ctx := context.Background()
 
 	var err error
+	dburl := fmt.Sprintf("postgres://%s:%s@%s/%s",
+		os.Getenv("PG_USER"),
+		os.Getenv("PG_PASSWORD"),
+		os.Getenv("PG_HOST"),
+		os.Getenv("PG_DATABASE"),
+	)
 	for range 3 {
-		db, err = pgx.Connect(ctx, os.Getenv("POSTGRES_URL"))
+		db, err = pgx.Connect(ctx, dburl)
 		if err != nil {
 			time.Sleep(time.Second)
 		}
@@ -55,13 +62,12 @@ func run() error {
 	m, err := migrate.NewWithSourceInstance(
 		"iofs",
 		src,
-		strings.Replace(os.Getenv("POSTGRES_URL"),
-			"postgres://", "pgx5://", 1),
+		strings.Replace(dburl, "postgres://", "pgx5://", 1),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to set up migration: %w", err)
 	}
-	if err := m.Up(); err != nil {
+	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return fmt.Errorf("failed to migrate db: %w", err)
 	}
 

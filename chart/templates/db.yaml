@@ -1,0 +1,66 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.domain | default "smol.lan" | replace "." "-" }}-db
+  namespace: {{ .Values.domain | default "smol.lan" | replace "." "-" }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: {{ .Values.dbsize | default "1Gi" }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db
+  namespace: {{ .Values.domain | default "smol.lan" | replace "." "-" }}
+spec:
+  serviceName: db
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+        - name: postgres
+          image: {{ .Values.dbimage | default "lesiw/smol:db" }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: secret
+          resources:
+            requests:
+              memory: {{ .Values.dbmemory | default "64Mi" }}
+            limits:
+              memory: {{ .Values.dbmemory | default "64Mi" }}
+          volumeMounts:
+            - name: pgdata
+              mountPath: /var/lib/postgresql/data
+              subPath: pgdata
+      volumes:
+        - name: pgdata
+          persistentVolumeClaim:
+            claimName: {{ .Values.domain | default "smol.lan" | replace "." "-" }}-db
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  namespace: {{ .Values.domain | default "smol.lan" | replace "." "-" }}
+spec:
+  ports:
+    - port: 5432
+      protocol: TCP
+  selector:
+    app: db

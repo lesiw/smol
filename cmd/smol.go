@@ -2,15 +2,14 @@ package main
 
 import (
 	"context"
-	"crypto/rand"
 	"errors"
 	"fmt"
-	"math/big"
 	"os"
 
 	"github.com/jackc/pgx/v5"
 	"lesiw.io/defers"
 	"lesiw.io/flag"
+	"lesiw.io/smol/internal/randstr"
 	"lesiw.io/smol/stmt"
 )
 
@@ -18,19 +17,14 @@ var (
 	flags = flag.NewSet(os.Stderr, "smol [-a ALIAS] URL")
 	alias = flags.String("a", "alias")
 
-	errParse = errors.New("parse error")
+	errFlag = errors.New("parse error")
 
 	db *pgx.Conn
 )
 
-const (
-	chars    = 6
-	alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-)
-
 func main() {
 	if err := run(); err != nil {
-		if !errors.Is(err, errParse) {
+		if !errors.Is(err, errFlag) {
 			fmt.Fprintln(os.Stderr, err)
 		}
 		defers.Exit(1)
@@ -40,11 +34,11 @@ func main() {
 
 func run() error {
 	if err := flags.Parse(os.Args[1:]...); err != nil {
-		return errParse
+		return errFlag
 	}
 	if len(flags.Args) < 1 {
 		flags.PrintError("url is required")
-		return errParse
+		return errFlag
 	}
 	url := flags.Args[0]
 	ctx, cancel := context.WithCancel(context.Background())
@@ -65,7 +59,7 @@ func run() error {
 	var id string
 	if *alias == "" {
 		for range 3 {
-			if id, err = shortid(); err != nil {
+			if id, err = randstr.New(6); err != nil {
 				return err
 			}
 			rows, err := db.Query(ctx, stmt.AddUrl, id, url)
@@ -91,16 +85,4 @@ func run() error {
 	}
 
 	return nil
-}
-
-func shortid() (string, error) {
-	id := make([]byte, chars)
-	for i := range id {
-		num, err := rand.Int(rand.Reader, big.NewInt(int64(len(alphabet))))
-		if err != nil {
-			return "", err
-		}
-		id[i] = alphabet[num.Int64()]
-	}
-	return string(id), nil
 }
