@@ -1,4 +1,4 @@
-# smol: a URL shortner
+# smol: a URL shortener
 
 ## Local development
 
@@ -21,14 +21,16 @@ minikube image build -t lesiw/smol:db -f Dockerfile.pg .
 
 ``` sh
 go run internal/secrets/generate.go -n "${DOMAIN:-smol.lan}"
-helm install smol ./chart \
-    --set domain="${DOMAIN:-smol.lan}" \
-    --set storageClass=standard \
-    --set dbsize=1Gi \
-    --set memory=32Mi \
-    --set dbmemory=64Mi \
-    --set image=lesiw/smol \
-    --set dbimage=lesiw/smol:db
+helm install smol ./chart --set domain="${DOMAIN:-smol.lan}"
+
+# Additional configuration options:
+# helm install smol ./chart --set domain="${DOMAIN:-smol.lan}" \
+#     --set storageClass=standard \
+#     --set dbsize=1Gi \
+#     --set memory=32Mi \
+#     --set dbmemory=64Mi \
+#     --set image=lesiw/smol \
+#     --set dbimage=lesiw/smol:db
 ```
 
 ## Manage URLs

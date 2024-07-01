@@ -21,13 +21,13 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: PG_HOST
+            - name: PGHOST
               value: db
-            - name: PG_USER
+            - name: PGUSER
               value: postgres
-            - name: PG_DATABASE
+            - name: PGDATABASE
               value: postgres
-            - name: PG_PASSWORD
+            - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
                   name: db-secret

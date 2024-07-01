@@ -10,7 +10,7 @@ import (
 	"lesiw.io/defers"
 	"lesiw.io/flag"
 	"lesiw.io/smol/internal/randstr"
-	"lesiw.io/smol/stmt"
+	"lesiw.io/smol/internal/stmt"
 )
 
 var (
