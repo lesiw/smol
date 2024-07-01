@@ -10,7 +10,7 @@ require (
 	k8s.io/client-go v0.30.2
 	lesiw.io/defers v0.7.0
 	lesiw.io/flag v0.6.0
-	lesiw.io/plain v0.2.0
+	lesiw.io/plain v0.4.0
 )
 
 require (

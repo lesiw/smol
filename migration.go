@@ -9,8 +9,8 @@ import (
 )
 
 //go:embed sql/migrations/*
-var migrations embed.FS
+var _migrationFS embed.FS
 
-func migrate() error {
-	return plain.Migrate(migrations)
+func init() {
+	plain.MigrationFS = _migrationFS
 }

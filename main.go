@@ -1,4 +1,4 @@
-//go:generate go run lesiw.io/plain/cmd/plaingen@v0.2.0
+//go:generate go run lesiw.io/plain/cmd/plaingen@v0.4.0
 
 package main
 
@@ -28,8 +28,7 @@ func main() {
 
 func run() error {
 	ctx := context.Background()
-
-	db = plain.ConnectPgx(ctx, migrate)
+	db = plain.ConnectPgx(ctx)
 	defers.Add(db.Close)
 
 	domain := os.Getenv("DOMAIN")
