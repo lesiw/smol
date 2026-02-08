@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/jackc/pgx/v5"
+
 	"lesiw.io/defers"
 	"lesiw.io/flag"
 	"lesiw.io/smol/internal/randstr"
